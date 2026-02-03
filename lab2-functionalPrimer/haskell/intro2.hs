@@ -32,7 +32,7 @@ main =
 
 
 -- generic string conversion, using a Java-friendly name:
-toString value = show value
+toString value = show value :: String
 
 -- string concatenation:
 greet1 = "hello " ++ name ++ (toString 123)

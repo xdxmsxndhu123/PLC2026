@@ -1,24 +1,51 @@
-//Create list of ints from 1 to 5, Haskell equivalent [1..5]
-function arrFunc(){
+// Create list of ints from a to b (inclusive)
+function arrFunc(a, b) {
     let arr = [];
-    for (let i = 1; i<=5; i++) {
+    for (let i = a; i <= b; i++) {
         arr.push(i);
     }
-    return arr;    
+    return arr;
 }
 
-function applicatorFunc(inpFunc, s){
-    if(s=='s'){
-        const arr = inpFunc();        
-        let sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+// applicatorFunc: takes a function, start, end, and choice ('s' or 'a')
+function applicatorFunc(inpFunc, a, b, choice) {
+    const arr = inpFunc(a, b);
+    const sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+    if (choice === 's') {
         return sum;
-    }
-    else{        
-        const arr = inpFunc();
-        let sum = arr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-        return sum/5;
+    } else if (choice === 'a') {
+        return sum / arr.length;
+    } else {
+        throw new Error("Invalid choice! Use 's' for sum or 'a' for average.");
     }
 }
 
-let x = applicatorFunc(arrFunc, 's');
-console.log(x);
+// ===== User Input Section =====
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+readline.question("Enter start of range (a): ", aStr => {
+    readline.question("Enter end of range (b): ", bStr => {
+        readline.question("Enter 's' for sum or 'a' for average: ", choiceStr => {
+            const a = parseInt(aStr);
+            const b = parseInt(bStr);
+            const choice = choiceStr.trim().toLowerCase();
+
+            try {
+                const result = applicatorFunc(arrFunc, a, b, choice);
+                if (choice === 's') {
+                    console.log(`Sum = ${result}`);
+                } else {
+                    console.log(`Average = ${result}`);
+                }
+            } catch (err) {
+                console.error(err.message);
+            }
+
+            readline.close();
+        });
+    });
+});
