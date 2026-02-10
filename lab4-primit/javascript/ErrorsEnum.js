@@ -14,18 +14,18 @@ const Result_enumobj = {
     VERY_DIFFERENT: "VERY_DIFFERENT"
 }
 
-function error2Result(err){
-    switch (err) {
-	case Error_enumobj.FP_ROUNDING:
-	 return Result_enumobj.A_BIT_DIFFERENT;
+function result2Error(res){
+    switch (res) {
+	case Result_enumobj.A_BIT_DIFFERENT:
+	 return Error_enumobj.FP_ROUNDING;
 	break;
-	case Error_enumobj.FP_OVERFLOW:
-	    return Result_enumobj.INFINITY;
+	case Result_enumobj.INFINITY:
+	    return Error_enumobj.FP_OVERFLOW;
 	break;
-	case Error_enumobj.FP_UNDERFLOW:
-	    return Result_enumobj.ZERO;
+	case Result_enumobj.ZERO:
+	    return Error_enumobj.FP_UNDERFLOW;
 	break;
-	case Error_enumobj.INT_OVERFLOW:
+	case Result_enumobj.INT_OVERFLOW:
 	    return Result_enumobj.VERY_DIFFERENT;
 	break;
 	default:
@@ -38,12 +38,12 @@ console.log('Error list: ', Object.values(Error_enumobj));
 var validArg = false;
 while(!validArg){
     var input = prompt("Input: ");
-    let result = error2Result(input);
-    if (Object.values(Result_enumobj).includes(result)){
+    let result = result2Error(input);
+    if (Object.values(Error_enumobj).includes(error)){
         validArg = true;
-		console.log(input + " results in " + error2Result(input));
+		console.log(input + " results in " + result2Error(input));
     }
     else{
-        console.log(result);
+        console.log(error);
     }
 }
