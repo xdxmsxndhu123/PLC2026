@@ -25,8 +25,8 @@ function result2Error(res){
 	case Result_enumobj.ZERO:
 	    return Error_enumobj.FP_UNDERFLOW;
 	break;
-	case Result_enumobj.INT_OVERFLOW:
-	    return Result_enumobj.VERY_DIFFERENT;
+	case Result_enumobj.VERY_DIFFERENT:
+	    return Error_enumobj.INT_OVERFLOW;
 	break;
 	default:
 		return 'Invalid Error value';
@@ -34,16 +34,16 @@ function result2Error(res){
 
 }
 
-console.log('Error list: ', Object.values(Error_enumobj));
+console.log('Result list: ', Object.values(Result_enumobj));
 var validArg = false;
 while(!validArg){
     var input = prompt("Input: ");
-    let result = result2Error(input);
-    if (Object.values(Error_enumobj).includes(error)){
+    let err = result2Error(input);
+    if (Object.values(Error_enumobj).includes(err)){
         validArg = true;
-		console.log(input + " results in " + result2Error(input));
+		console.log(input + " results from " + result2Error(input));
     }
     else{
-        console.log(error);
+        console.log(err);
     }
 }
