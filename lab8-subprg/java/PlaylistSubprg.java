@@ -82,14 +82,28 @@ public class PlaylistSubprg {
             this(items, 0);
         }
 
-        public Item getNextItem() throws EndOfPlaylist { //Extension Task 3b: Replace with a pure procedure and a pure function
+        public Item getCurrentItem() throws EndOfPlaylist {
+            if (index >= items.size()) {
+                throw new EndOfPlaylist();
+            }
+            return items.get(index);
+        }
+
+        public void shiftToNextItem() throws EndOfPlaylist {
+            if (index >= items.size()) {
+                throw new EndOfPlaylist();
+            }
+            index++;
+        }
+
+        /* public Item getNextItem() throws EndOfPlaylist { //Extension Task 3b: Replace with a pure procedure and a pure function
             if (index >= items.size()) {
                 throw new EndOfPlaylist();
             }
             Item result = items.get(index);
             index++;
             return result;
-        }
+        } */
 
         public class EndOfPlaylist extends Exception {
 
@@ -111,12 +125,13 @@ public class PlaylistSubprg {
      */
     public static float getPlaylistLengthTwoItems(List<Item> playlist) throws PlaylistProgress.EndOfPlaylist {
         PlaylistProgress progress = new PlaylistProgress(playlist);
-        // TASK 3a: Is the expression below referentially transparent?
-        return twice(progress.getNextItem().length_secs);
-    }
 
-    private static float twice(float x) {
-        return x + x;
+        float result = 0f;
+        result += progress.getCurrentItem().length_secs;
+        // TASK 3a: Is the expression below referentially transparent? NO, because it modifies the state of progress
+        progress.shiftToNextItem();
+        result += progress.getCurrentItem().length_secs;
+        return result;
     }
 
     /**
@@ -169,6 +184,16 @@ public class PlaylistSubprg {
      */
     public static void getPlaylistLength_CopyInCopyOutPassing(List<Item> playlist, FloatHolder result,
             FloatHolder resultNoAds) {
+        float resultCopy = result.x;
+        float resultNoAdsCopy = resultNoAds.x;
+        for (Item item : playlist) {
+            resultCopy = resultCopy + item.length_secs;
+            if (!(item instanceof Advert)) {
+                resultNoAdsCopy = resultNoAdsCopy + item.length_secs;
+            }
+        }
+        result.x = resultCopy;
+        resultNoAds.x = resultNoAdsCopy;
         // TASK 2b: complete this method, simulating copy-in/copy-out parameter passing
 
 
@@ -183,7 +208,7 @@ public class PlaylistSubprg {
     }
 
     public static void main(String[] args)
-        throws PlaylistProgress.EndOfPlaylist 
+       // throws PlaylistProgress.EndOfPlaylist 
         {
         // TASK 1b: remove the above throws declaration, and handle the exception properly in the loop at line 234
 
@@ -232,9 +257,15 @@ public class PlaylistSubprg {
 
         PlaylistProgress progress = new PlaylistProgress(playlist1);
         while (true) {        //TASK 1c: Modify this loop to handle the EndOfPlaylist exception
-            float remainingLength = progress.getRemainingLength();
-            System.out.printf("Next item = %s \n", progress.getNextItem());
-            System.out.printf("  remaining play time = %.2f \n", remainingLength);
+            try {
+                float remainingLength = progress.getRemainingLength();
+                System.out.printf("Next item = %s \n", progress.getCurrentItem());
+                System.out.printf("  remaining play time = %.2f \n", remainingLength);
+                progress.shiftToNextItem();
+            } catch (PlaylistProgress.EndOfPlaylist e) {
+                System.out.println("End of playlist reached.");
+                break;
+            }
         }
     }
 }
